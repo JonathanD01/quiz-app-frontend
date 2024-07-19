@@ -43,9 +43,7 @@ services:
       - grafana-storage:/var/lib/grafana
 
   frontend:
-    #image: sofocused/job-post-frontend:1.0.9
-    build:
-      context: .
+    image: sofocused/quiz-frontend:1.0
     restart: always
     depends_on:
       - htpasswd
