@@ -1,0 +1,88 @@
+version: '3.7'
+
+services:
+
+  htpasswd:
+    image: sofocused/htpasswd:1.0
+    command: >
+      sh -c "python generator.py -u admin -p admin --path /htpasswd && tail -f /dev/null"
+    volumes:
+      - htpasswd:/app/htpasswd/
+
+  prometheus-service:
+    image: prom/prometheus:v2.53.1
+    restart: unless-stopped
+    container_name: prometheus
+    command: 
+    - --web.external-url=http://frontend:80/prometheus/
+    - --web.route-prefix=/
+    - --config.file=/etc/prometheus/prometheus.yml
+    expose:
+      - 9090
+    volumes:
+      - prometheus-storage:/prometheus
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana-service:
+    image: grafana/grafana:9.5.2
+    restart: unless-stopped
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_HTTP_PORT=3000
+      - GF_SERVER_PROTOCOL=http
+      - GF_SERVER_DOMAIN=localhost:80
+      - GF_SERVER_ROOT_URL=http://localhost:80/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    expose:
+      - 3000
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana-storage:/var/lib/grafana
+
+  frontend:
+    #image: sofocused/job-post-frontend:1.0.9
+    build:
+      context: .
+    restart: always
+    depends_on:
+      - htpasswd
+    ports:
+      - "80:80"
+    volumes:
+      - htpasswd:/etc/nginx/htpasswd
+
+  backend-service:
+    image: sofocused/quiz-app-api:1.0
+    restart: always
+    depends_on:
+      database-service:
+        condition: service_healthy
+    environment:
+      - SPRING_AI_OPENAI_APIKEY=changeme
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database-service/testdb
+      - SPRING_JPA_SHOWSQL=false
+    ports:
+      - 8080:8080
+
+  database-service:
+    image: postgres:alpine
+    restart: unless-stopped
+    volumes:
+      - C:\postgres_container_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=testdb
+    healthcheck:
+      test: "pg_isready -U $${POSTGRES_USER}  -d $${POSTGRES_DB}"
+      interval: 10s
+      timeout: 30s
+      retries: 10
+
+volumes:
+  grafana-storage: {}
+  prometheus-storage: {}
+  htpasswd: {}

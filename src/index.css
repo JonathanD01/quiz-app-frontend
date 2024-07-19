@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-size: 20px;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+/* handle hover for QuizPlayUI buttons */
+#quizAnswerOption:hover {
+  opacity: 0.7;
+}
+
+.max-lines-quiz-title {
+  --max-lines: 1;
+  -webkit-line-clamp: var(--max-lines);
+  line-clamp: var(--max-lines);
+}
+
+.max-lines-quiz-description {
+  --max-lines: 3;
+  -webkit-line-clamp: var(--max-lines);
+  line-clamp: var(--max-lines);
+}
+
+.max-lines-for-quiz {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+
+
