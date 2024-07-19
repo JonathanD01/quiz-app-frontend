@@ -43,7 +43,7 @@ services:
       - grafana-storage:/var/lib/grafana
 
   frontend:
-    image: sofocused/quiz-frontend:1.1
+    image: sofocused/quiz-frontend:1.0
     restart: always
     depends_on:
       - htpasswd
@@ -56,7 +56,7 @@ services:
       - htpasswd:/etc/nginx/htpasswd
 
   backend-service:
-    image: sofocused/quiz-app-api:1.0
+    image: sofocused/quiz-app-api:1.2
     restart: always
     depends_on:
       database-service:
