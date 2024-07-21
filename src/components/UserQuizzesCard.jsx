@@ -20,7 +20,7 @@ const UserQuizzesCard = () => {
   const WEBSOCKET_URL =
     process.env.NODE_ENV === "production"
       ? window.location.protocol.includes("https")
-        ? "wss://localhost:80/quiz-websocket"
+        ? "wss://localhost:8080/quiz-websocket"
         : "ws://localhost:80/quiz-websocket"
       : "ws://localhost:8080/quiz-websocket";
 
