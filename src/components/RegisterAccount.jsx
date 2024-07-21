@@ -18,7 +18,7 @@ const RegisterAccount = () => {
     setLoading(true);
     try {
       const result = await register(inputs);
-      if (result.status === 202) {
+      if (result.status === 200) {
         navigate("/logg-inn");
         showSuccessToast(
           "Bruker opprettet",

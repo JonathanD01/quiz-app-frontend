@@ -21,7 +21,7 @@ services:
       - 9090
     volumes:
       - prometheus-storage:/prometheus
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus:/etc/prometheus
 
   grafana-service:
     image: grafana/grafana:9.5.2
@@ -34,7 +34,7 @@ services:
       - GF_SERVER_HTTP_PORT=3000
       - GF_SERVER_PROTOCOL=http
       - GF_SERVER_DOMAIN=localhost:80
-      - GF_SERVER_ROOT_URL=http://localhost:80/grafana/
+      - GF_SERVER_ROOT_URL=http://frontend-service:80/grafana/
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     expose:
       - 3000
@@ -43,7 +43,7 @@ services:
       - grafana-storage:/var/lib/grafana
 
   frontend:
-    image: sofocused/quiz-frontend:1.0
+    image: sofocused/quiz-frontend:1.1
     restart: always
     depends_on:
       - htpasswd
@@ -65,8 +65,6 @@ services:
       - SPRING_AI_OPENAI_APIKEY=changeme
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database-service/testdb
       - SPRING_JPA_SHOWSQL=false
-    ports:
-      - 8080:8080
 
   database-service:
     image: postgres:alpine

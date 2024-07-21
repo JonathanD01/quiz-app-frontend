@@ -9,7 +9,7 @@ import { Spinner } from "./ui/spinner";
 const Login = () => {
   const { inputs, handleChange } = useFormInputs();
   const { showErrorToast } = useToastHandler();
-  const { token, user, login, isAuthenticated } = useContext(AuthContext);
+  const { token, login, isAuthenticated } = useContext(AuthContext);
   const [isLoading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ const Login = () => {
     if (isAuthenticated()) {
       navigate("/min-side");
     }
-  }, [token]);
+  }, []);
 
   return (
     <div className="flex min-h-[750px] flex-col bg-white">
